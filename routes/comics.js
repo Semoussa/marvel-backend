@@ -5,13 +5,17 @@ const router = express.Router();
 // -------- GET COMICS ---------------
 router.get("/comics", async (req, res) => {
   try {
+    const { title, limit, skip } = req.query;
     const response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.MARVEL_API_KEY}`,
+      "https://lereacteur-marvel-api.herokuapp.com/comics",
+      { params: { apiKey: process.env.MARVEL_API_KEY, title, limit, skip } },
     );
     // console.log(response.data);
     res.status(200).json(response.data);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(error.response?.status || 500).json({
+      message: error.response?.data?.message || error.message,
+    });
   }
 });
 
